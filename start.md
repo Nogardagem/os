@@ -1,5 +1,5 @@
 # Start
-[Home](README.md)
+[Home](README.md) [Next - Setup](setup.md)
 
 [OSDev Introduction](https://wiki.osdev.org/Introduction)
 
