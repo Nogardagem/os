@@ -27,7 +27,9 @@ An operating system is **not**:
 
 ## Important elements of an OS
 The [kernel](https://wiki.osdev.org/Introduction#:~:text=of%20operating%20systems.-,What%20is%20a%20kernel%3F,-The%20kernel%20of), which is what handles execution of programs
+
 The [shell](https://wiki.osdev.org/Introduction#:~:text=operation%20more%20efficiently.-,What%20is%20a%20shell%3F,-A%20shell%20is), which is the "UI" responsible for allowing the user to organize files and run programs
+
 The [GUI](https://wiki.osdev.org/Introduction#:~:text=etc.-,What%20is%20a%20GUI%20about%3F,-The%20graphical%20user), the display that the user sees, that can catch inputs, and that can update required screen areas.
 
 ## Required knowledge
