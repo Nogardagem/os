@@ -1,5 +1,6 @@
 # Setup
 [Home](README.md) [Previous - Start](start.md)
+[OSDev Bare Bones Tutorial](https://wiki.osdev.org/Bare_Bones#Booting_the_Operating_System:~:text=External%20Links-,Building%20a%20Cross%2DCompiler,-Main%20article%3A)
 ## GCC Cross Compiler
 The GCC Cross Compiler is what's required to compile any code being written into its eventual final form as machine code.
 
