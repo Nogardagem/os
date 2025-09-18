@@ -1,4 +1,5 @@
 # Setup
+[Home](README.md)
 ## Downloading tools
 All of this is using Windows, which means some extra tools are required
 
