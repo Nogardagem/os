@@ -1,9 +1,7 @@
 # Setup
 [Home](README.md)
-## Downloading tools
-All of this is using Windows, which means some extra tools are required
-
-First is [Cygwin](https://wiki.osdev.org/Cygwin), which effectively emulates a UNIX environment
+## Development Environment and Tools
+Via [its section](https://wiki.osdev.org/Getting_Started#:~:text=semester%20isn%27t%20realistic.-,Choosing%20your%20development%20environment,-You%20need%20a) on the getting started page, [Cygwin](https://wiki.osdev.org/Cygwin) will be required for me as essentially an emulation of a UNIX environment to build my code in
 
 [Cygwin.com](https://www.cygwin.com/) is the website to download
 
