@@ -1,5 +1,9 @@
 # Start
 [Home](README.md)
+
+[OSDev Introduction](https://wiki.osdev.org/Introduction)
+
+[OSDev Getting Started](https://wiki.osdev.org/Getting_Started)
 ## Where to Start
 I found [OSDev](https://wiki.osdev.org/Expanded_Main_Page), which has tons of stuff on how to make your own OS.
 Going to read through it and see what I get.
