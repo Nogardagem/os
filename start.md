@@ -6,11 +6,6 @@ Going to read through it and see what I get.
 
 The [Getting Started](https://wiki.osdev.org/Getting_Started) page has been the most significantly used page so far.
 
-## Cross-compilers
-Looks like a [GCC cross-compiler](https://wiki.osdev.org/GCC_Cross-Compiler) is needed to translate C/C++ into the proper type of machine code that can be run without the host OS.
-As I am *planning* to run this directly from boot, without a host OS in the way, this may not be as relevant? But I have no idea.
-I also don't know C pretty much at all, and my C++ skills are mediocre at best, so who knows what this'll take.
-
 ## What an OS does
 Via the [introduction page](https://wiki.osdev.org/Introduction) on the OSDev Wiki
 Major functions of operating systems may include:
