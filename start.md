@@ -1,0 +1,34 @@
+# Starting
+## Where to start?
+I found this site, [OSDev](https://wiki.osdev.org/Expanded_Main_Page), which has tons of stuff on how to make your own OS.
+Going to read through it and see what I get.
+
+## Cross-compilers
+Looks like a [GCC cross-compiler](https://wiki.osdev.org/GCC_Cross-Compiler) is needed to translate C/C++ into the proper type of machine code that can be run without the host OS.
+As I am *planning* to run this directly from boot, without a host OS in the way, this may not be as relevant? But I have no idea.
+I also don't know C pretty much at all, and my C++ skills are mediocre at best, so who knows what this'll take.
+
+## What an OS does
+Via the [introduction page](https://wiki.osdev.org/Introduction) on the OSDev Wiki
+Major functions of operating systems may include:
+- Managing memory and other system resources.
+- Imposing security and access policies.
+- Scheduling and multiplexing processes and threads.
+- Launching and closing user programs dynamically.
+- Providing a basic user interface and application programmer interface.
+Not all operating systems provide all of these functions. Single-tasking systems like MS-DOS would not schedule processes, while embedded systems like eCOS may not have a user interface, or may work with a static set of user programs.
+
+An operating system is **not**:
+- The computer hardware.
+- A specific application such as a word processor, web browser or game.
+- A suite of utilities (like the GNU tools, which are used in many Unix-derived systems).
+- A development environment (though some OSes, such as UCSD Pascal or Smalltalk-80, incorporate an interpreter and IDE).
+- A graphical user interface (though many modern operating systems incorporate a GUI as part of the OS).
+
+## Important elements of an OS
+The [kernel](https://wiki.osdev.org/Introduction#:~:text=of%20operating%20systems.-,What%20is%20a%20kernel%3F,-The%20kernel%20of), which is what handles execution of programs
+The [shell](https://wiki.osdev.org/Introduction#:~:text=operation%20more%20efficiently.-,What%20is%20a%20shell%3F,-A%20shell%20is), which is the "UI" responsible for allowing the user to organize files and run programs
+The [GUI](https://wiki.osdev.org/Introduction#:~:text=etc.-,What%20is%20a%20GUI%20about%3F,-The%20graphical%20user), the display that the user sees, that can catch inputs, and that can update required screen areas.
+
+## Required knowledge
+https://wiki.osdev.org/Required_Knowledge
