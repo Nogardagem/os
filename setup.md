@@ -1,5 +1,5 @@
 # Setup
-[Home](README.md)
+[Home](README.md) [Previous](start.md)
 ## Development Environment and Tools
 Via [its section](https://wiki.osdev.org/Getting_Started#:~:text=semester%20isn%27t%20realistic.-,Choosing%20your%20development%20environment,-You%20need%20a) on the getting started page, [Cygwin](https://wiki.osdev.org/Cygwin) will be required for me as essentially an emulation of a UNIX environment to build my code in
 
