@@ -3,6 +3,8 @@
 I found this site, [OSDev](https://wiki.osdev.org/Expanded_Main_Page), which has tons of stuff on how to make your own OS.
 Going to read through it and see what I get.
 
+The [Getting Started](https://wiki.osdev.org/Getting_Started) page has been the most significantly used page so far.
+
 ## Cross-compilers
 Looks like a [GCC cross-compiler](https://wiki.osdev.org/GCC_Cross-Compiler) is needed to translate C/C++ into the proper type of machine code that can be run without the host OS.
 As I am *planning* to run this directly from boot, without a host OS in the way, this may not be as relevant? But I have no idea.
@@ -34,3 +36,18 @@ The [GUI](https://wiki.osdev.org/Introduction#:~:text=etc.-,What%20is%20a%20GUI%
 
 ## Required knowledge
 https://wiki.osdev.org/Required_Knowledge
+
+This contains a list of required knowledge for OS development. I have about 1/2 of the bullet points already covered, but I don't have too much of:
+4. Assembly
+7. UNIX experience
+8. Toolchain
+9. Emulators and virtualizers
+10. Executable formats
+11. The platform
+12. The concept
+
+The page recommends [this book](https://github.com/tuhdo/os01/blob/master/Operating_Systems_From_0_to_1.pdf) to read for beginning knowledge
+
+## Choosing a development environment
+Via [its section](https://wiki.osdev.org/Getting_Started#:~:text=semester%20isn%27t%20realistic.-,Choosing%20your%20development%20environment,-You%20need%20a) on the getting started page
+
