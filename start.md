@@ -1,6 +1,6 @@
 # Starting
 ## Where to start?
-I found this site, [OSDev](https://wiki.osdev.org/Expanded_Main_Page), which has tons of stuff on how to make your own OS.
+I found [OSDev](https://wiki.osdev.org/Expanded_Main_Page), which has tons of stuff on how to make your own OS.
 Going to read through it and see what I get.
 
 The [Getting Started](https://wiki.osdev.org/Getting_Started) page has been the most significantly used page so far.
@@ -37,14 +37,7 @@ The [GUI](https://wiki.osdev.org/Introduction#:~:text=etc.-,What%20is%20a%20GUI%
 ## Required knowledge
 https://wiki.osdev.org/Required_Knowledge
 
-This contains a list of required knowledge for OS development. I have about 1/2 of the bullet points already covered, but I don't have too much of:
-4. Assembly
-7. UNIX experience
-8. Toolchain
-9. Emulators and virtualizers
-10. Executable formats
-11. The platform
-12. The concept
+This contains a list of required knowledge for OS development. I have about 1/2 of the bullet points already covered nicely, and the rest I will be sure to learn as I work more on this project.
 
 The page recommends [this book](https://github.com/tuhdo/os01/blob/master/Operating_Systems_From_0_to_1.pdf) to read for beginning knowledge
 
