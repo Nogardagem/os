@@ -51,3 +51,6 @@ The page recommends [this book](https://github.com/tuhdo/os01/blob/master/Operat
 ## Choosing a development environment
 Via [its section](https://wiki.osdev.org/Getting_Started#:~:text=semester%20isn%27t%20realistic.-,Choosing%20your%20development%20environment,-You%20need%20a) on the getting started page
 
+From here, it seems like Cygwin will be required for me as essentially an emulation of a UNIX environment to build my code in
+
+This progresses me to [the setup phase](setup.md)
