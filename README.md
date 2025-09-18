@@ -5,9 +5,9 @@ I'll be adding/changing/removing text in each of these documents as I go to keep
 
 0. Useful References
    - [OSDev](https://wiki.osdev.org/)
-2. [Start](start.md)
+1. [Start](start.md)
    - [Where to Start](start.md#where-to-start)
    - [What an OS Does](start.md#what-an-os-does)
    - [Important Elements of an OS](start.md#important-elements-of-an-os)
    - [Required Knowledge](start.md#required-knowledge)
-3. [Setup](setup.md)
+2. [Setup](setup.md)
