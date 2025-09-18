@@ -9,8 +9,11 @@ To set up the cross compiler for Windows, you need to have [Cygwin](https://wiki
 ### Cygwin
 [Cygwin.com](https://www.cygwin.com/) is the website to download
 
+For the sake of this "attempt" (if I need to do this again), I downloaded Cygwin directly in my C: drive.
+
 For windows, [this](https://wiki.osdev.org/GCC_Cross-Compiler#Preparing_for_the_build:~:text=build%20from%20there-,Windows%20Users,-Windows%20users%20need) is where the required Cygwin packages are. Add these in from the setup/installer program downloaded from [the Cygwin install page](http://cygwin.com/install.html).
 
 The package selector thing is weird, but to select a package for download you just search in the search bar, then double-click on "skip" and it'll switch to the latest release version to be downloaded.
 
 ### Back to GCC Cross Compiler Stuff
+The next step is [the build](https://wiki.osdev.org/GCC_Cross-Compiler#:~:text=%2D%2Ddisable%2Dlto-,The%20Build,-We%20build%20a) of the GCC Cross Compiler. As given at the start of this section, the recommended install location for the compiler is in `$Home/opt/cross`, which in Cygwin translates to `C:\cygwin64\home\[username]\opt\cross`.
