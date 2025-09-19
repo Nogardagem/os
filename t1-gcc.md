@@ -1,6 +1,6 @@
 # Setup
 
-[Home](README.md) [Previous - Start](start.md)
+[Home](README.md) [Back to Bare Bones](bare-bones.md)
 
 [OSDev Bare Bones Tutorial](https://wiki.osdev.org/Bare_Bones#Booting_the_Operating_System:~:text=External%20Links-,Building%20a%20Cross%2DCompiler,-Main%20article%3A)
 
@@ -30,21 +30,30 @@ The next step is [the build](https://wiki.osdev.org/GCC_Cross-Compiler#:~:text=%
 
 Below the section shows commands for running in the console, in my case the Cygwin terminal. I recommend reading the rest of my process before attempting to run the commands.
 
-> **NOTE**: When the commands say `binutils-x.y.z` and `gcc-x.y.z`, they mean to replace `x.y.z` with the version you installed (or rather, the name of the install directory). In my case, this was `binutils-2.45` and `gcc-15.2.0`.
+> **NOTE:** When the commands say `binutils-x.y.z` and `gcc-x.y.z`, they mean to replace `x.y.z` with the version you installed (or rather, the name of the install directory). In my case, this was `binutils-2.45` and `gcc-15.2.0`.
 
 Some of the steps will take a decent amount of time. In the [Binutils section](https://wiki.osdev.org/GCC_Cross-Compiler#:~:text=make%0Amake%20install-,This,-compiles%20the%20binutils), the most notable was `make`, which took about 15 minutes.
 
 For the sake of what I'm doing, I *believe* I can skip the [GDB section](https://wiki.osdev.org/GCC_Cross-Compiler#:~:text=useful%20later%20on.-,GDB,-It%20may%20be), as it seems to be optional.
 
-> **NOTE for the [GCC section](https://wiki.osdev.org/GCC_Cross-Compiler#:~:text=have%20any%20effect.-,GCC,-See%20also%20the)**: It might make sense to take note of which of the `make` commands you're on, since there are 6 of them in a row and it *may* cause problems if you attempt to re-run one. Of course, if the commands have changed as of the latest version of the OSDev docs, then you should use the new ones instead.
-
-- [x] all-gcc
-- [ ] all-target-libgcc
-- [ ] all-target-libstdc++-v3
-- [ ] install-gcc
-- [ ] install-target-libgcc
-- [ ] install-target-libstdc++-v3
-
 After reaching the line starting with `which`, I go the error echoed, so I needed to go back and restart from [preparation](https://wiki.osdev.org/GCC_Cross-Compiler#:~:text=for%20older%20versions.-,Preparation,-export%20PREFIX%3D), after deleting everything from the `$HOME/scr/build-binutils` directory. This appears to have fixed it.
 
+> **NOTE for the [GCC section](https://wiki.osdev.org/GCC_Cross-Compiler#:~:text=have%20any%20effect.-,GCC,-See%20also%20the):** It might make sense to take note of which of the `make` commands you're on, since there are 6 of them in a row and it *may* cause problems if you attempt to re-run one. Of course, if the commands have changed as of the latest version of the OSDev docs, then you should use the new ones instead.
 
+- [x] make all-gcc
+- [x] make all-target-libgcc
+- [x] make all-target-libstdc++-v3
+- [x] make install-gcc
+- [x] make install-target-libgcc
+- [x] make install-target-libstdc++-v3
+
+`make all-gcc` is taking a *very* long time (an hour and 45 minutes in the end), worth noting if you can't keep your computer running for some reason at this point.
+> **Note:** this may be due to using Cygwin with Windows, or it may be an error.
+
+Other steps aren't taking nearly as long. After finishing those, the GCC Cross Compiler *should* be installed.
+
+### [Using the new Compiler](https://wiki.osdev.org/GCC_Cross-Compiler#:~:text=the%20new%20Compiler-,Now,-you%20have%20a)
+
+The first command given in this section tests for the version of gcc, and proved that I did it correctly. If you get an error here, then it was likely either not installed correctly or was somehow installed in the wrong location.
+
+After confirming that works, this section of the tutorial is done, and says to return to [the Bare Bones tutorial](https://wiki.osdev.org/Bare_Bones).

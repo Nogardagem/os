@@ -11,4 +11,4 @@ I'll be adding/changing/removing text in each of these documents as I go to keep
    - [What an OS Does](start.md#what-an-os-does)
    - [Important Elements of an OS](start.md#important-elements-of-an-os)
    - [Required Knowledge](start.md#required-knowledge)
-2. [Setup](setup.md)
+2. [The Bare Bones Tutorial](bare-bones.md)
