@@ -36,16 +36,14 @@ Some of the steps will take a decent amount of time. In the [Binutils section](h
 
 For the sake of what I'm doing, I *believe* I can skip the [GDB section](https://wiki.osdev.org/GCC_Cross-Compiler#:~:text=useful%20later%20on.-,GDB,-It%20may%20be), as it seems to be optional.
 
-> **NOTE for the [GCC section](https://wiki.osdev.org/GCC_Cross-Compiler#:~:text=have%20any%20effect.-,GCC,-See%20also%20the)**: It might make sense to take note of which of the `make` commands you're on, since there are 6 of them in a row and it *may* cause problems if you attempt to re-run one.
+> **NOTE for the [GCC section](https://wiki.osdev.org/GCC_Cross-Compiler#:~:text=have%20any%20effect.-,GCC,-See%20also%20the)**: It might make sense to take note of which of the `make` commands you're on, since there are 6 of them in a row and it *may* cause problems if you attempt to re-run one. Of course, if the commands have changed as of the latest version of the OSDev docs, then you should use the new ones instead.
 
-- [ ] all-gcc
+- [x] all-gcc
 - [ ] all-target-libgcc
 - [ ] all-target-libstdc++-v3
 - [ ] install-gcc
 - [ ] install-target-libgcc
 - [ ] install-target-libstdc++-v3
-
-Of course, if the commands have changed as of the latest version of the OSDev docs, then you should use the new ones instead.
 
 After reaching the line starting with `which`, I go the error echoed, so I needed to go back and restart from [preparation](https://wiki.osdev.org/GCC_Cross-Compiler#:~:text=for%20older%20versions.-,Preparation,-export%20PREFIX%3D), after deleting everything from the `$HOME/scr/build-binutils` directory. This appears to have fixed it.
 
