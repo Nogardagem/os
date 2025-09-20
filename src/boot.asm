@@ -22,10 +22,10 @@
         
         
         
-        ;dl / 2
+        ;dl / 2   via DIV= ax/bl->al, ax%bl->ah
         mov al, dl
-        mov ah, 0 ; clean up ah, also you can do it before, like move ax, 9
-        mov bl, 2 ; prepare divisor
+        mov ah, 0 
+        mov bl, 2 
         div bl
         mov ah, 0
         ;result % 2
@@ -35,25 +35,26 @@
         mov bh, 0
         add bx, 000eh
         mov di, 1000h
-        mov [di], bx
+        mov [di], bx ;this whole section moves color selection into [0x1000]
         
 
-        mov dx, ax
-        mov ah, 0 ; clean up ah, also you can do it before, like move ax, 9
-        mov bl, 2 ; prepare divisor
-        div bl ; al = ax / bl, ah = ax % bl
+        mov ax, dx ;divides dx by 2
+        mov ah, 0
+        mov bl, 2
+        div bl
         mov ah, 0
 
-        mov di, ax ;these two lines load memory at [dx] into al for determining char
+        mov di, ax ;loads memory at result (dx/2) into al for determining char
         mov al, [di]
-        ;mov al, dl
-        ;mov ah, 0 ; clean up ah, also you can do it before, like move ax, 9
-        ;mov bl, 2 ; prepare divisor
-        ;div bl ; al = ax / bl, ah = ax % bl
 
-        ;mov al, al ;for clarity
+        mov ah, 0
+        mov bl, 0fh
+        div bl
+        mov al, ah
+        add al, 0037h
+        
         mov di, 1000h
-        mov bx, [di]
+        mov bx, [di] ;gets color back from [0x1000] into bx (lowest hex of bx determines color)
 
         ;lodsb           ;Load a byte of the message into AL.
                          ;Remember that DS is 0 and SI holds the
