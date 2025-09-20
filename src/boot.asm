@@ -17,6 +17,7 @@
                          ;AH = 2
  Char:   mov ah, 2       ;BH = page, DH = row, DL = column
          int 10h
+         ;mov al, 0041h
          lodsb           ;Load a byte of the message into AL.
                          ;Remember that DS is 0 and SI holds the
                          ;offset of one of the bytes of the message.
