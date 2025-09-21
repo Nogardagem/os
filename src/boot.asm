@@ -21,10 +21,6 @@
         int 10h
         ;mov al, 0041h
         ;inc al
-        mov di, 1008h
-        mov bx, 00f0fh
-        mov [di], bx
-        
         
         ;dl / 2   via DIV= ax/bl->al, ax%bl->ah
         mov al, dl
@@ -62,45 +58,25 @@
         ;mov [di], ax
         mov di, ax ;loads memory at result (dx/2 + 1000) into al for determining char
         mov al, [di]
-
-        
-        ;mov di, 1002h
-        ;mov al, [di]
-        ;mov ah, 4
-        ;mul ah
-        ;mov cl, al
-
-        ;mov di, 1100h
-        ;mov di, [di];loads memory at result (dx/2 + 1000) into al for determining char
-        ;mov al, [di]
-
-        ;shr al, cl
-        ;mov cl, 1
         
         mov ah, 0 ;divide by 0x10 and get remainder
         mov bl, 10h
         div bl
 
-        mov di, 1002h
-        mov si, [di]
-        mov cx, ax
-        mul si
-        mov cl, al
-
-        ;si = 1-si
-        mov ax, 1
-        sub ax, si
-        mov si, ax
-
-        mov al, ch
-        mul si
-        mov ah, 0
-        add al, cl
+        mov di, 1002h ;get dl%2
+        mov cl, [di]
+        cmp cl, 0
         mov cx, 1
-        mov si, 0
+        jne Later ;if dl%2 == 1:
+        mov ah, al; then get div result, not remainder (gets [x ] instead of [ x] from byte hex)
+       Later:
 
-        ;mov al, ah
-        add al, 0037h ;add offset for chars
+        mov al, ah
+        cmp al, 9
+        jbe AfterLetterOffset ;jump below or equal
+        add al, 0007h
+       AfterLetterOffset:
+        add al, 0030h ;add offset for chars
         
         mov di, 1000h
         mov bx, [di] ;gets color back from [0x1000] into bx (lowest hex of bx determines color)
@@ -125,6 +101,11 @@
         cmp dh, 25      ;Wrap around bottom of screen if necessary
         jne Skip
         xor dh, dh
+
+        mov di, 1008h ;when wrap, inc test counter
+        mov bx, [di]
+        inc bx
+        mov [di], bx
  
  Skip:  jmp Char
  
