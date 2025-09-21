@@ -26,14 +26,12 @@ Along with NASM and QEMU, I need some sort of editor for the code itself. I deci
 
 > this may or may not be moved to a separate file later on
 
-After getting my tools ready, I wanted to immediately get into running my own code. To get started, I decided to find out how to get the [sample bootloader](references/wikibook-bootloader-sample.md) working. As the [WikiBook](https://en.wikibooks.org/wiki/X86_Assembly/Bootloaders) stated, I need to first assemble the code into binary using NASM, and then test it using an emulator like QEMU. I found out how to get those running given my setup, which resulted in [`os.bat`](src/os.bat):
+After getting my tools ready, I wanted to immediately get into running my own code. To get started, I decided to find out how to get the [sample bootloader](references/wikibook-bootloader-sample.md) working. As the [WikiBook](https://en.wikibooks.org/wiki/X86_Assembly/Bootloaders) stated, I need to first assemble the code into binary using NASM, and then test it using an emulator like QEMU. I found out how to get those running given my setup, which resulted in [`os.bat`](references/os-bat-explanation.md):
 
 ```batch
 "C:\Program Files\nasm\nasm" -f bin boot.asm -o boot.bin
 "C:\Program Files\qemu\qemu-system-i386" -fda boot.bin
 ```
-
-> [os.bat explanation](references/os-bat-explanation.md)
 
 Surprisingly, this was all it took to get a working bootloader. After running `os.bat` (via `source os.bat` in the bash terminal while in [`os/src/`](/src/)), QEMU opened and displayed my OS, which at the time of this initial run had it filling the screen with copies of `Hello, World!`, looping at edges according to the samble bootloader's code.
 
