@@ -5,12 +5,10 @@
  Start:mov bx, 000Fh   ;Page 0, colour attribute 15 (white) for the int 10 calls below
        mov cx, 1       ;We will want to write 1 character
        xor dx, dx      ;Start at top left corner
-                        ;PC BIOS Interrupt 10 Subfunction 2 - Set cursor position
-                        ;AH = 2
+                       ;PC BIOS Interrupt 10 Subfunction 2 - Set cursor position
+                       ;AH = 2
  Char: mov ah, 2       ;BH = page, DH = row, DL = column
        int 10h
-       ;mov al, 0041h
-       ;inc al
        
        ;dl / 2   via DIV= ax/bl->al, ax%bl->ah
        mov al, dl
@@ -82,7 +80,6 @@
        jne Skip
        xor dl, dl
        inc dh
-       mov al, 0040h
  
        cmp dh, 25      ;Wrap around bottom of screen if necessary
        jne Skip
@@ -96,10 +93,6 @@
  Skip: jmp Char
  
  
- times 0200h - 2 - ($ - $$)  db 0    ;Zerofill up to 510 bytes
+times 0200h - 2 - ($ - $$)  db 0    ;Zerofill up to 510 bytes
  
-        dw 0AA55h       ;Boot Sector signature
- 
- ;OPTIONAL:
- ;To zerofill up to the size of a standard 1.44MB, 3.5" floppy disk
- ;times 1474560 - ($ - $$) db 0
+       dw 0AA55h       ;Boot Sector signature
