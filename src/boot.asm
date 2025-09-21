@@ -10,7 +10,9 @@
         xor dx, dx      ;Start at top left corner
         mov ds, dx      ;Ensure ds = 0 (to let us load the message)
         cld             ;Ensure direction flag is cleared (for LODSB)
- 
+        
+        
+
  Print: mov al, 0040h     ;Loads the address of the first byte of the message, 7C02h in this case
  
                          ;PC BIOS Interrupt 10 Subfunction 2 - Set cursor position
@@ -19,7 +21,9 @@
         int 10h
         ;mov al, 0041h
         ;inc al
-        
+        mov di, 1008h
+        mov bx, 00f0fh
+        mov [di], bx
         
         
         ;dl / 2   via DIV= ax/bl->al, ax%bl->ah
@@ -38,20 +42,46 @@
         mov [di], bx ;this whole section moves color selection into [0x1000]
         
 
-        mov ax, dx ;divides dx by 2
+        mov al, dl ;divides dl by 2
         mov ah, 0
         mov bl, 2
         div bl
-        mov ah, 0
 
-        mov di, ax ;loads memory at result (dx/2) into al for determining char
+        mov di, 1002h ;move dl%2 into storage at 0x1002
+        mov [di], ah
+
+        mov ah, 0
+        add ax, 1000h ;adds 1000 for mem offset
+        
+        mov bx, 0 ;add dh<<2 to address
+        mov bl, dh
+        sal bx, 4
+        add ax, bx
+        
+        mov di, 1100h
+        mov [di], ax
+        ;mov di, ax ;loads memory at result (dx/2 + 1000) into al for determining char
+        ;mov al, [di]
+
+        
+        mov di, 1002h
+        mov al, [di]
+        mov ah, 4
+        mul ah
+        mov cl, al
+
+        mov di, 1100h
+        mov di, [di];loads memory at result (dx/2 + 1000) into al for determining char
         mov al, [di]
 
-        mov ah, 0
-        mov bl, 0fh
+        shr al, cl
+        mov cl, 1
+        
+        mov ah, 0 ;divide by 0x10 and get remainder
+        mov bl, 10h
         div bl
         mov al, ah
-        add al, 0037h
+        add al, 0037h ;add offset for chars
         
         mov di, 1000h
         mov bx, [di] ;gets color back from [0x1000] into bx (lowest hex of bx determines color)
@@ -67,7 +97,7 @@
  
         inc dl          ;Advance cursor
  
-        cmp dl, 80      ;Wrap around edge of screen if necessary
+        cmp dl, 32   ;80   ;Wrap around edge of screen if necessary
         jne Skip
         xor dl, dl
         inc dh
