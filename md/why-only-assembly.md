@@ -1,6 +1,6 @@
 # Why Only Assembly?
 
-> When I say "assembly" here, it means x86 assembly
+> When I say 'assembly' here, it means x86 assembly
 
 ## TL;DR
 
