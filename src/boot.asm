@@ -58,29 +58,48 @@
         sal bx, 4
         add ax, bx
         
-        mov di, 1100h
-        mov [di], ax
-        ;mov di, ax ;loads memory at result (dx/2 + 1000) into al for determining char
-        ;mov al, [di]
+        ;mov di, 1100h
+        ;mov [di], ax
+        mov di, ax ;loads memory at result (dx/2 + 1000) into al for determining char
+        mov al, [di]
 
         
-        mov di, 1002h
-        mov al, [di]
-        mov ah, 4
-        mul ah
-        mov cl, al
+        ;mov di, 1002h
+        ;mov al, [di]
+        ;mov ah, 4
+        ;mul ah
+        ;mov cl, al
 
-        mov di, 1100h
-        mov di, [di];loads memory at result (dx/2 + 1000) into al for determining char
-        mov al, [di]
+        ;mov di, 1100h
+        ;mov di, [di];loads memory at result (dx/2 + 1000) into al for determining char
+        ;mov al, [di]
 
-        shr al, cl
-        mov cl, 1
+        ;shr al, cl
+        ;mov cl, 1
         
         mov ah, 0 ;divide by 0x10 and get remainder
         mov bl, 10h
         div bl
-        mov al, ah
+
+        mov di, 1002h
+        mov si, [di]
+        mov cx, ax
+        mul si
+        mov cl, al
+
+        ;si = 1-si
+        mov ax, 1
+        sub ax, si
+        mov si, ax
+
+        mov al, ch
+        mul si
+        mov ah, 0
+        add al, cl
+        mov cx, 1
+        mov si, 0
+
+        ;mov al, ah
         add al, 0037h ;add offset for chars
         
         mov di, 1000h
