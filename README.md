@@ -2,17 +2,17 @@
 
 A project describing my process of making (or failing to make) my own OS
 
-I'll be adding/changing/removing text in each of these documents as I go to keep the most relevant and useful information. I'd like this to at least support me being able to reproduce the steps involved in this process, but I would also like it to be kind enough that anyone could follow along for the same outcome.
+> I'll be changing each of these documents as I go to keep the most relevant/useful information. I'd like this to support me (and hopefully others) in being able to reproduce this project.
+>
+> Everything in [the old README](old/old-read.md) was before I made the realization I will describe in the next section.
 
-Everything in [the old README](old/old-read.md) was before I made the realization I will describe in the next section:
+## Making My OS Using Only x86 Assembly
 
-## Making my OS Using Only x86 Assembly
+The main idea of this project is to make an operating system from scratch, with no prebuilt classes or objects or anything like that, simply creating the binary files that'll run on a new empty machine. Of course, I'm not quite insane enough to work in plain binary (at least, not yet), but I don't want to use any tools beyond x86 assembly to create this OS.
 
-The main idea of this project is to make an OS from scratch, with no prebuilt classes or objects or anything like that, simply creating the binary files that'll run on a new empty machine. Of course, I'm not quite insane enough to work in plain binary (at least, not yet), but I don't want to use any tools beyond x86 assembly to create this OS.
+In [the old files](old/old-read.md), I started my process by using a tutorial on the [OSDev](https://wiki.osdev.org/) website. That tutorial, however, assumed the reader wanted to create an OS using C/C++ as their primary programming language, and included many steps specific to that.
 
-In [the old files](old/old-read.md), as mentioned earlier, I started my process by using a tutorial on the [OSDev](https://wiki.osdev.org/) website. That tutorial, however, assumed the reader wanted to create an OS using C/C++ as their primary programming language, and included many steps specific to that.
-
-I, on the other hand, only want to use assembly, which (surprisingly) makes the early steps of OS development easier.
+Instead, I want to use only assembly ([why?](md/why-only-assembly.md)), which (surprisingly) makes the early steps of OS development a little easier.
 
 ## Where I Started
 
