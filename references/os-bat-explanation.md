@@ -15,6 +15,14 @@ Quotation marks are required around the file locations because `Program Files` c
 
 `boot.bin` is the resulting binary file from compilation.
 
+All of these files, as well as `os.bat` itself, are contained in [`os/src/`](/src/).
+
+## Executing os.bat
+
+I executed `os.bat` via `source os.bat` in the bash terminal while in [`os/src/`](/src/)
+
+You need to be in `os/src/` while executing the batch file because it uses relative file locations. If you were to move `os.bat` to `os/` and wanted to execute it from `os/`, then you would need to alter it to use `src/boot.asm` and `src/boot.bin`.
+
 ## NASM
 
 I haven't yet looked into what the NASM parameters do.

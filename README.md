@@ -31,8 +31,4 @@ After getting my tools ready, I wanted to immediately get into running my own co
 "C:\Program Files\qemu\qemu-system-i386" -fda boot.bin
 ```
 
-Surprisingly, this was all it took to get a working bootloader. After running `os.bat`, QEMU opened and displayed my OS, which according to the sample was filling the screen with copies of `Hello, World!` and looping at the screen's edges.
-
-> I ran `os.bat` via `source os.bat` in the bash terminal while in [`os/src/`](/src/)
->
-> You need to be in `os/src/` while running the batch file because it uses relative file locations. If you were to move `os.bat` to `os/` and wanted to execute it from `os/`, then you would need to alter it to use `src/boot.asm` and `src/boot.bin`.
+Surprisingly, this was all it took to get a working bootloader. After [executing `os.bat`](references/os-bat-explanation.md#executing-osbat), QEMU opened and displayed my OS, which according to the sample was filling the screen with copies of `Hello, World!` and looping at the screen's edges.
