@@ -1,10 +1,11 @@
-       org 7C00h
+       org 7C00h ;this line is necessary for jump offsets that end up being absolute
  
         
  
  Start:mov bx, 000Fh   ;Page 0, colour attribute 15 (white) for the int 10 calls below
        mov cx, 1       ;We will want to write 1 character
        xor dx, dx      ;Start at top left corner
+
                        ;PC BIOS Interrupt 10 Subfunction 2 - Set cursor position
                        ;AH = 2
  Char: mov ah, 2       ;BH = page, DH = row, DL = column
@@ -35,7 +36,7 @@
        mov [di], ah
 
        mov ah, 0
-       add ax, 0000h ;adds 1000 for mem offset
+       add ax, 7c00h ;adds mem offset of some value, 7c00 is for bootloader start
        
        mov bx, 0 ;add dh<<2 to address
        mov bl, dh
@@ -89,9 +90,20 @@
        mov bx, [di]
        inc bx
        mov [di], bx
+
+       mov ax,13h        ;test to render pixel
+       int 10h             
+       mov ax,0A000h        
+       mov es,ax             
+       mov ax,32010          
+       mov di,ax             
+       mov dl,4             
+       mov [es:di],dx        
+       int 10h
  
  Skip: jmp Char
- 
+
+jmp 1234h:5678h
  
 times 0200h - 2 - ($ - $$)  db 0    ;Zerofill up to 510 bytes
  
