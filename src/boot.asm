@@ -6,11 +6,12 @@
        mov cx, 1       ;We will want to write 1 character
        xor dx, dx      ;Start at top left corner
 
+
                        ;PC BIOS Interrupt 10 Subfunction 2 - Set cursor position
                        ;AH = 2
  Char: ;mov ah, 2       ;BH = page, DH = row, DL = column
        ;int 10h
-       
+
        ;dl / 2   via DIV= ax/bl->al, ax%bl->ah
        mov al, dl
        mov ah, 0 
@@ -87,8 +88,7 @@
        xor dh, dh
  
  Skip: ;test for pixel rendering
-       mov ax,13h    ;320x200 screen mode
-       int 10h       ;graphics interrupt
+       
        mov ax,0A000h ;video memory segment   
        mov es,ax     ;into es register
        
@@ -99,12 +99,13 @@
        add ax,ax ;double result so it's actually times 320
        mov bx,0 ;clear bx
        mov bl,dl ;move x pos into bl
-       add ax,bx ;add bx (x pos) to ax (y pos times width
-       mov di,ax
-       ;mov di,320      ;pixel location, 0 is top left
+       add ax,bx ;add bx (x pos) to ax (y pos times width)
+       mov di,ax ;set pixel location
+       
        mov al,4      ;color 4 (red)
        mov [es:di],al        
-       int 10h
+       mov ax,13h    ;320x200 screen mode
+       int 10h       ;graphics interrupt
 
        jmp Char
  
