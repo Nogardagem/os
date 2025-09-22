@@ -13,7 +13,7 @@ Quotation marks are required around the file locations because `Program Files` c
 
 `boot.asm` is my bootloader (just [the sample](wikibook-bootloader-sample.md) as of this stage).
 
-`boot.bin` is the resulting binary file from compilation.
+`boot.bin` is the resulting binary file from assembling `boot.asm`.
 
 All of these files, as well as `os.bat` itself, are contained in [`os/src/`](/src/).
 

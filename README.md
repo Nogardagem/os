@@ -32,3 +32,33 @@ After getting my tools ready, I wanted to immediately get into running my own co
 ```
 
 Surprisingly, this was all it took to get a working bootloader. After [executing `os.bat`](references/os-bat-explanation.md#executing-osbat), QEMU opened and displayed my OS, which according to the sample was filling the screen with copies of `Hello, World!` and looping at the screen's edges.
+
+### First Experiments
+
+The first thing I did to mess with the sample code was make it so `Hello, World!` ended a line, so you could read it consistently. All this took was deleting
+
+```nasm
+inc dl          ;Advance cursor
+
+cmp dl, 80      ;Wrap around edge of screen if necessary
+jne Skip
+xor dl, dl
+inc dh
+```
+
+from the main loop section, and instead adding `inc dh` to make
+
+```nasm
+cmp si, EndMsg  ;If we're not at end of message,
+jne Char        ;continue loading characters
+
+inc dh ; <--added, new line after finishing "Hello, World!"
+
+jmp Print       ;otherwise restart from the beginning of the message
+```
+
+at the `Skip` label.
+
+This works because the [sample bootloader](references/wikibook-bootloader-sample.md) is using the lower half of the `d` register (`dl`) to store the x position of the cursor, and the upper half (`dh`) to store the y position. Instead of testing for wrapping at screen edges, I had it always wrap at the end of the message. 
+
+> If the message was long enough to reach the screen edge on its own, then you'd want to leave in the first section, so the message fills two lines instead of continuing off-screen.
