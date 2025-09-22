@@ -8,8 +8,8 @@
 
                        ;PC BIOS Interrupt 10 Subfunction 2 - Set cursor position
                        ;AH = 2
- Char: mov ah, 2       ;BH = page, DH = row, DL = column
-       int 10h
+ Char: ;mov ah, 2       ;BH = page, DH = row, DL = column
+       ;int 10h
        
        ;dl / 2   via DIV= ax/bl->al, ax%bl->ah
        mov al, dl
@@ -73,7 +73,7 @@
                         ;PC BIOS Interrupt 10 Subfunction 9 - Write character and colour
                         ;AH = 9
        mov ah, 9       ;BH = page, AL = character, BL = attribute, CX = character count
-       int 10h
+       ;int 10h
  
        inc dl          ;Advance cursor
 
@@ -85,25 +85,28 @@
        cmp dh, 25      ;Wrap around bottom of screen if necessary
        jne Skip
        xor dh, dh
-
-       mov di, 1008h ;when wrap, inc test counter
-       mov bx, [di]
-       inc bx
-       mov [di], bx
-
-       mov ax,13h        ;test to render pixel
-       int 10h             
-       mov ax,0A000h        
-       mov es,ax             
-       mov ax,32010          
-       mov di,ax             
-       mov dl,4             
-       mov [es:di],dx        
-       int 10h
  
- Skip: jmp Char
+ Skip: ;test for pixel rendering
+       mov ax,13h    ;320x200 screen mode
+       int 10h       ;graphics interrupt
+       mov ax,0A000h ;video memory segment   
+       mov es,ax     ;into es register
+       
+       mov ax,0 ;clear ax
+       mov al,dh ;move y pos into al
+       mov bl,160;move 160 (half screen width) into bl
+       mul bl ;multiply y pos by bl (stored in ax)
+       add ax,ax ;double result so it's actually times 320
+       mov bx,0 ;clear bx
+       mov bl,dl ;move x pos into bl
+       add ax,bx ;add bx (x pos) to ax (y pos times width
+       mov di,ax
+       ;mov di,320      ;pixel location, 0 is top left
+       mov al,4      ;color 4 (red)
+       mov [es:di],al        
+       int 10h
 
-jmp 1234h:5678h
+       jmp Char
  
 times 0200h - 2 - ($ - $$)  db 0    ;Zerofill up to 510 bytes
  
