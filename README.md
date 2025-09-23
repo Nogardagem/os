@@ -35,6 +35,8 @@ Surprisingly, this was all it took to get a working bootloader. After [executing
 
 ### First Experiments
 
+#### Better "Hello, World!"
+
 The first thing I did to mess with the sample code was make it so `Hello, World!` ended a line, so you could read it consistently. All this took was deleting
 
 ```nasm
@@ -59,6 +61,44 @@ jmp Print       ;otherwise restart from the beginning of the message
 
 at the `Skip` label.
 
-This works because the [sample bootloader](references/wikibook-bootloader-sample.md) is using the lower half of the `d` register (`dl`) to store the x position of the cursor, and the upper half (`dh`) to store the y position. Instead of testing for wrapping at screen edges, I had it always wrap at the end of the message. 
+This works because the [sample bootloader](references/wikibook-bootloader-sample.md) is using the lower half of the `d` register (`dl`) to store the x position of the cursor, and the upper half (`dh`) to store the y position. Instead of testing for wrapping at screen edges, I had it always wrap at the end of the message.
 
 > If the message was long enough to reach the screen edge on its own, then you'd want to leave in the first section, so the message fills two lines instead of continuing off-screen.
+
+#### Memory Rendering
+
+After getting this text rendering working, I decided to see what else I could do with this limited rendering mode. I honestly don't remember too much of this process, as I was having a lot of fun messing with things.
+
+What I ended up creating, however, was a boot file ([`src/saves/boot-mem.asm`](src/saves/boot-mem.asm)) that renders a certain region of memory as bytes on the screen. I set it to render the memory region containing the running bootloader, and so if you were to run it instead of `boot.asm` in `os.bat`, the memory it displays is the same as the hex values in the generated binary file for the bootloader (`boot.bin`).
+
+If you want to know more about how it works, there are *some* comments in the file which may explain things well enough to be useful.
+
+#### Pixel Rendering
+
+My next goal was to get any rendering system other than text rendering to work. Similarly, I poorly documented my process, but the comments this time are much better.
+
+> I left the structure from the original template in, so label names are a bit odd
+
+The primary code for this version is
+
+```nasm
+mov ax,0A000h    ;video memory segment   
+mov es,ax        ;into es register
+
+mov ax,0         ;clear ax
+mov al,dh        ;move y pos into al
+mov bl,160       ;move 160 (half screen width) into bl
+mul bl           ;multiply y pos by bl (stored in ax)
+add ax,ax        ;double result so it's actually times 320
+mov bx,0         ;clear bx
+mov bl,dl        ;move x pos into bl
+add ax,bx        ;add bx (x pos) to ax (y pos times width)
+mov di,ax        ;set pixel location
+
+mov al,4         ;color 4 (red)
+mov [es:di],al        
+mov ax,13h       ;320x200 screen mode
+int 10h          ;graphics interrupt
+```
+
+This makes use of the 320x200 pixel rendering mode, with 16 unique colors. I repurposed the main loop of the previous setup to render a pixel at the end of each step, putting the pixel at the x and y position of the former cursor. This makes a single red pixel loop around inside a small box until it reaches the bottom right, where it then goes back to the beginning.
