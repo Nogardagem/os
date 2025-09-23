@@ -28,7 +28,7 @@ After getting my tools ready, I wanted to immediately get into running my own co
 
 ```batch
 "C:\Program Files\nasm\nasm" -f bin boot.asm -o boot.bin
-"C:\Program Files\qemu\qemu-system-i386" -fda boot.bin
+"C:\Program Files\qemu\qemu-system-i386" -drive file=boot.bin,index=0,format=raw
 ```
 
 Surprisingly, this was all it took to get a working bootloader. After [executing `os.bat`](references/os-bat-explanation.md#executing-osbat), QEMU opened and displayed my OS, which according to the sample was filling the screen with copies of `Hello, World!` and looping at the screen's edges.
