@@ -168,3 +168,7 @@ The `printal` function makes use of `al`, `dl`, and `dh` as parameters for its p
 `printnl` prints a newline, which really means it shifts the entire screen of characters up one line. I opted to make my own copy of the display in memory, rather than finding if it's stored somewhere in memory already, as it could be convenient later.
 
 The main use of these functions will be to render memory and labels for data that I get from running BIOS interrupts for rendering data. From [OSDev's VESA Video Mode page](https://wiki.osdev.org/VESA_Video_Modes), it seems like I'll be able to query the BIOS for supported video modes. I can then hopefully use this information to grab the closest mode to 1080p, and adjust my rendering routines to it.
+
+#### Querying Video Modes
+
+For this section, I've used code and ideas from [OSDev VESA Video Modes](https://wiki.osdev.org/VESA_Video_Modes) and the [OSDev VESA Tutorial](https://wiki.osdev.org/User:Omarrx024/VESA_Tutorial). Initially, I copied and reinterpreted code from *VESA Video Modes* to get the supported video modes from the BIOS using `int 0x10` with `ax = 0x4f01`. After confirming that worked using my `printbyte` function, I got the code from the *VESA Tutorial* that looped through each valid video mode and checked their resolution. I checked the values stored in the `width` variable of the data section, and printed the `width` and `height` of each resolution with a `width` of 1920 (`0x780`), which resulted in `0x780 by 0x438` and `0x780 by 0x4B0`, which are 1920x1080 (16:9) and 1920x1200 (16:10), respectively.
