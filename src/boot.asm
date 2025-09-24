@@ -108,6 +108,36 @@ printbyte: ;prints the byte stored in al as two hex chars
     add dl,2
 ret
 
+printbytedec:
+    pushad
+    mov di,dx
+    mov cx,0
+
+    push 0
+    printbytedecstart: ;dividing dx:ax by bx
+        mov dx,0
+        mov bx,10
+        div bx
+
+        mov bx,ax ;move result into bx
+        mov ax,dx ;move remainder into ax, which should always be below 10
+        add al,0030h
+        inc cl
+        push ax
+        mov ax,bx
+        cmp ax,0
+    jne printbytedecstart
+
+    mov dx,di
+    call printstack
+
+    pop di ;di is last pushed in pushad
+    push cx
+    popad
+    mov cx,di
+    add dl,cl
+ret
+
 printnl:
     pushad
 
@@ -310,8 +340,6 @@ vbe_set_mode:
 	mov fs, ax
 	mov si, [.offset]
 
-    push 0x1800; gets popped as dx later
-
 .find_mode:
 	mov dx, [fs:si]
 	add si, 2
@@ -334,45 +362,36 @@ vbe_set_mode:
     
 	jne .error
 
-    pop dx
-    cmp dl,60
-    jle .notoverflow
-    call printnl
-    .notoverflow:
-
     mov bx,[VesaModeInfoBlockBuffer+VesaModeInfoBlock.Width]
-    cmp bx,1920
-
-    mov al,' '
-    jne .Notrightres
-    add al,0Ah ;print star instead of space if right res
-    .Notrightres:
-    ;call printnl
+    cmp bx,1399 ;limit width
+    jle .Notrightres ;if less than limit amount
+    
+    
+    call printnl
     mov dh,24
-    call printal
 
     mov ax,[VesaModeInfoBlockBuffer+VesaModeInfoBlock.Width]
-    mov bx,ax
-    mov al,bh
-    call printbyte
-    mov al,bl
-    call printbyte
+    call printbytedec
+
+    mov al, 'x'
+    call printal
+    mov ax,[VesaModeInfoBlockBuffer+VesaModeInfoBlock.Height]
+    call printbytedec
+    
+    ;mov bx,ax
+    ;mov al,bh
+    ;call printbyte
+    ;mov al,bl
+    ;call printbyte
 
     mov al, ' '
     call printal
-    mov ax,[VesaModeInfoBlockBuffer+VesaModeInfoBlock.Height]
-    mov bx,ax
-    mov al,bh
-    call printbyte
-    mov al,bl
-    call printbyte
 
-    push 0
-    push ' '
-    push ' '
-    call printstack
+    mov al, [VesaModeInfoBlockBuffer+VesaModeInfoBlock.BitsPerPixel]
+    mov ah,0
+    call printbytedec
 
-    push dx
+    .Notrightres:
     ;1920x1080 in hex is 0x0780 by 0x0438
 
     jmp .next_mode
