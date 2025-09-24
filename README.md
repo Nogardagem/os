@@ -101,7 +101,7 @@ mov ax,13h       ;320x200 screen mode
 int 10h          ;graphics interrupt
 ```
 
-This makes use of the 320x200 pixel rendering mode, with 16 unique colors. I repurposed the main loop of the previous setup to render a pixel at the end of each step, putting the pixel at the x and y position of the former cursor. This makes a single red pixel loop around inside a small box until it reaches the bottom right, where it then goes back to the beginning. A similar version to this can be found [in saves](src/saves/boot-rendering-working.asm).
+This makes use of the 320x200 pixel rendering mode, with 16 unique colors. I repurposed the main loop of the previous setup to render a pixel at the end of each step, putting the pixel at the x and y position of the former cursor. This makes a single red pixel loop around inside a small box until it reaches the bottom right, where it then goes back to the beginning. A similar version to this can be found [in `src/saves/`](src/saves/boot-rendering-working.asm).
 
 #### "Debugging" For Memory Information
 
