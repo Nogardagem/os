@@ -5,23 +5,44 @@ jmp Start
 vmem equ 1000h ;makes a constant variable, only for assembler to use
 
 diskNumber: db 0
-SECTORS_TO_LOAD equ 4
+SECTORS_TO_LOAD equ 3
+
+ERROR: ;prints line of error when called, with ORG subtracted
+    call printnl
+    mov dx,0x1800
+    pop bx
+    sub bx,7c00h ; <---- ORG GOES HERE
+
+    push 0
+    push ' '
+    push 'R'
+    push 'R'
+    push 'E'
+    call printstack
+
+    mov al,bh
+    call printbyte
+    mov al,bl
+    call printbyte
+jmp $
 
 LoadSegment:;dl is sector al is how many to load si is position
 	pushad
 
 	mov ah, 0x2
-	mov ch, 0
-	mov cl, dl
-	mov dh, 0
+
+    mov dh, 0 ;simplified from below, clears ch and dh, sets cl to dl
+    mov cx, dx
+	
+	;mov ch, 0
+	;mov cl, dl
+	;mov dh, 0
+
 	mov dl, byte[diskNumber]
 	mov bx, si
 	int 0x13
 	jnc .suc
-		mov al, 'F'
-        mov dx,0x1800
-        call printal
-		jmp $ ;failed to load
+		call ERROR
 	.suc:
 	popad
 ret
@@ -65,7 +86,6 @@ printbyte: ;prints the byte stored in al as two hex chars
     mov bl,10h
     div bl
 
-    mov bh,0
     mov bl,al
     cmp bl, 9
     jbe AfterLetterOffset ;jump below or equal
@@ -111,7 +131,7 @@ printnl:
             mov dl,0
         skipreprintrow:
         cmp dh,25
-        jne reprintloop ;if not at height, continue
+    jne reprintloop ;if not at height, continue
 
     popad
     mov dl,0
@@ -119,15 +139,10 @@ ret
 
 
 Start:
-    ;Save device booted from
-	mov byte[diskNumber], dl
-
-    mov bx, 000Fh   ;Page 0, colour attribute 15 (white) for the int 10 calls below
-    mov cx, 1       ;We will want to write 1 character
-    xor dx, dx      ;Start at top left corner
+	mov byte[diskNumber], dl ;Save device booted from
 
     ;set all segment registers to 0
-	mov ax, 0
+	xor ax,ax
 	mov es, ax
 	mov ss, ax
 	mov ds, ax
@@ -251,12 +266,7 @@ Main2:
 
     call vbe_set_mode
 .NoModes:
-    mov dx,0x1800
-    call printnl
-    mov al, 'f'
-    call printal
-
-	jmp $
+    call ERROR
 
 ALIGN(4)
 
@@ -300,6 +310,8 @@ vbe_set_mode:
 	mov fs, ax
 	mov si, [.offset]
 
+    push 0x1800; gets popped as dx later
+
 .find_mode:
 	mov dx, [fs:si]
 	add si, 2
@@ -319,16 +331,24 @@ vbe_set_mode:
 	pop es
 
 	cmp ax, 0x4F
+    
 	jne .error
 
-    
-
-    mov ax,[VesaModeInfoBlockBuffer+VesaModeInfoBlock.Width]
-    cmp ax,1920
-    jne .Notrightres
+    pop dx
+    cmp dl,60
+    jle .notoverflow
     call printnl
+    .notoverflow:
+
+    mov bx,[VesaModeInfoBlockBuffer+VesaModeInfoBlock.Width]
+    cmp bx,1920
+
+    mov al,' '
+    jne .Notrightres
+    add al,0Ah ;print star instead of space if right res
+    .Notrightres:
+    ;call printnl
     mov dh,24
-    mov al,'*'
     call printal
 
     mov ax,[VesaModeInfoBlockBuffer+VesaModeInfoBlock.Width]
@@ -347,24 +367,13 @@ vbe_set_mode:
     mov al,bl
     call printbyte
 
-    ;1920x1080 in hex is 0x0780 by 0x0438
-
     push 0
-    push '8'
-    push '3'
-    push '4'
-    push '0'
-    push ' '
-    push '0'
-    push '8'
-    push '7'
-    push '0'
-    push ' '
     push ' '
     push ' '
     call printstack
-.Notrightres:
-    ;call printnl
+
+    push dx
+    ;1920x1080 in hex is 0x0780 by 0x0438
 
     jmp .next_mode
 	; mov ax, [.width]
@@ -426,15 +435,10 @@ vbe_set_mode:
 	jmp .find_mode
 
 .error:
-	stc
-    call printnl
-    mov al,'e'
-    mov dx,0x1800
-    call printal
-ret
+	call ERROR
 
 .no_more_modes:
-    nop;pass
+    ;pass
 ret
 
 .width				dw 0
@@ -448,4 +452,4 @@ ret
 
 
 
-times (512*(SECTORS_TO_LOAD+1))-($-$$) db 0
+times (512*(SECTORS_TO_LOAD+1))-($-$$) db 0 ;if this errors cuz of negative, need to load more sectors
