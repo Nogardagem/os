@@ -105,9 +105,9 @@ This makes use of the 320x200 pixel rendering mode, with 16 unique colors. I rep
 
 #### "Debugging" For Memory Information
 
-My next major goal *was* to make use of VGE graphics to render, rather than plain VGA. I found [this guide](https://dev.to/willy1948/guide-to-vbe-graphics-in-x86-5g2n) to setting it up, and tested out their code. I found, however, that VGE was still too limiting for me, as I want to eventually have 1920x1080 rendering. I did, however, make use of some of their code for my next experiment.
+My next major goal *was* to make use of VGE graphics to render, rather than plain VGA. I found [this guide](https://dev.to/willy1948/guide-to-vbe-graphics-in-x86-5g2n) to setting it up, and learned that VGE was still too limiting for me, as I want to eventually have 1920x1080 rendering. I still managed to make use of some of their other code for my next experiment, which was now meant to lead me into better rendering.
 
-When the bootloader is loaded normally, it only brings the 512 bytes around it into memory. Using [the github linked in that article](https://github.com/asdf-a11/VBE_Tutorial/blob/main/bootloader.asm), however, I was able to get larger programs working.
+When the bootloader is loaded normally, it only brings the 512 bytes around it into memory. Using [the github linked in that article](https://github.com/asdf-a11/VBE_Tutorial/blob/main/bootloader.asm), I was able to use their sector loading get larger programs working.
 
 After getting a larger programming space, I was able to implement a new version of my text renderer which could print as if it's a console, adding text on one line and pushing all the lines up when told to print a newline. The primary code for that is here:
 
