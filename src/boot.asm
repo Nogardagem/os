@@ -1,6 +1,6 @@
 org 7C00h ;offset jump addresses by this, because this is where the bootloader goes in memory
 
-jmp short Start
+jmp Start
 
 vmem equ 1000h ;makes a constant variable, only for assembler to use
 
@@ -19,15 +19,12 @@ LoadSegment:;dl is sector al is how many to load si is position
 	int 0x13
 	jnc .suc
 		mov al, 'F'
-        
-		jmp $
+        mov dx,0x1800
+        call printal
+		jmp $ ;failed to load
 	.suc:
-	;print . for number of sectors loaded
-	mov cl, al
-	mov al, '$'
-    
 	popad
-	ret
+ret
 
 printstack:
     pop si ;remove function return address from stack
@@ -43,6 +40,9 @@ printstack:
 
 printal:
     pushad
+    mov bx, 000Fh   ;Page 0, colour attribute 15 (white) for the int 10 calls below
+    mov cx, 1
+
     mov ah,2 ;cursor pos
     int 10h
     
@@ -57,6 +57,34 @@ printal:
     
     popad ;ensures dx doesn't keep the memory pos we added
     inc dl
+ret
+
+printbyte: ;prints the byte stored in al as two hex chars
+    pushad
+    mov ah,0 ;ensure nothing in ah
+    mov bl,10h
+    div bl
+
+    mov bh,0
+    mov bl,al
+    cmp bl, 9
+    jbe AfterLetterOffset ;jump below or equal
+        add bl, 0007h
+    AfterLetterOffset:
+    add bl, 0030h ;add offset for chars
+    mov al,bl
+    call printal ;print the char
+
+    mov bl,ah
+    cmp bl, 9
+    jbe AfterLetterOffset2 ;jump below or equal
+        add bl, 0007h
+    AfterLetterOffset2:
+    add bl, 0030h ;add offset for chars
+    mov al,bl
+    call printal
+
+    popad
 ret
 
 printnl:
@@ -97,11 +125,6 @@ Start:
     mov cx, 1       ;We will want to write 1 character
     xor dx, dx      ;Start at top left corner
 
-    mov dh,24
-    mov al,0x0041
-    call printal
-    ;call printnl
-
     ;set all segment registers to 0
 	mov ax, 0
 	mov es, ax
@@ -119,24 +142,21 @@ Start:
 	mov si, 0x7e00 ; where to place the sectors
 	call LoadSegment
 
+    mov dl,0
 	jmp nextSectorStart
 
 times 0200h - 2 - ($ - $$)  db 0    ;Zerofill up to 510 bytes
 dw 0AA55h       ;Boot Sector signature
 
 nextSectorStart:
-                ;PC BIOS Interrupt 10 Subfunction 2 - Set cursor position
-                ;AH = 2
-    mov ah, 2   ;BH = page, DH = row, DL = column
-    int 10h
-    
     push 0
-    push 'a'
-    push 'b'
-    push 'c'
+    ;push 'a'
+    ;push 'b'
+    ;push 'c'
     
+    inc ax
     mov dh,24
-    call printstack
+    call printbyte
     call printnl
  jmp nextSectorStart
 
