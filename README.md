@@ -101,4 +101,68 @@ mov ax,13h       ;320x200 screen mode
 int 10h          ;graphics interrupt
 ```
 
-This makes use of the 320x200 pixel rendering mode, with 16 unique colors. I repurposed the main loop of the previous setup to render a pixel at the end of each step, putting the pixel at the x and y position of the former cursor. This makes a single red pixel loop around inside a small box until it reaches the bottom right, where it then goes back to the beginning.
+This makes use of the 320x200 pixel rendering mode, with 16 unique colors. I repurposed the main loop of the previous setup to render a pixel at the end of each step, putting the pixel at the x and y position of the former cursor. This makes a single red pixel loop around inside a small box until it reaches the bottom right, where it then goes back to the beginning. A similar version to this can be found [in saves](src/saves/boot-rendering-working.asm).
+
+#### "Debugging" For Memory Information
+
+My next major goal *was* to make use of VGE graphics to render, rather than plain VGA. I found [this guide](https://dev.to/willy1948/guide-to-vbe-graphics-in-x86-5g2n) to setting it up, and tested out their code. I found, however, that VGE was still too limiting for me, as I want to eventually have 1920x1080 rendering. I did, however, make use of some of their code for my next experiment.
+
+When the bootloader is loaded normally, it only brings the 512 bytes around it into memory. Using [the github linked in that article](https://github.com/asdf-a11/VBE_Tutorial/blob/main/bootloader.asm), however, I was able to get larger programs working.
+
+After getting a larger programming space, I was able to implement a new version of my text renderer which could print as if it's a console, adding text on one line and pushing all the lines up when told to print a newline. The primary code for that is here:
+
+```nasm
+printal:
+    pushad
+    mov bx, 000Fh   ;Page 0, colour attribute 15 (white) for the int 10 calls below
+    mov cx, 1
+
+    mov ah,2 ;cursor pos
+    int 10h
+    
+    mov ah, 9 ;print
+    int 10h
+
+    add dx,vmem ;load letter memory pos
+    push 0 ;ensure es is 0
+    pop es
+    mov di,dx
+    mov [es:di],al ;fill letter memory for letter
+    
+    popad ;ensures dx doesn't keep the memory pos we added
+    inc dl
+ret
+
+printnl:
+    pushad
+
+    push 0 ;ensure es is 0
+    pop es
+    mov dx,0 ;start at top left
+    reprintloop:
+        mov di,vmem ;get address of letter memory loaded
+        
+        inc dh ;grab letter in next row
+        add di,dx
+        mov al,[es:di]
+        dec dh
+        
+        call printal ;print that letter in this row
+        ;printal moved to right already
+        
+        cmp dl,80
+        jne skipreprintrow
+            inc dh ;if at width, inc row
+            mov dl,0
+        skipreprintrow:
+        cmp dh,25
+        jne reprintloop ;if not at height, continue
+
+    popad
+    mov dl,0
+ret
+```
+
+The `printal` function makes use of `al`, `dl`, and `dh` as parameters for its printing. As implied by its name, `al` is the character to be printed. `dl` is responsible for holding the cursor x position, and `dh` is for the y position. `dh` is meant to be set to 24 before the main print function, so that new characters are printed on the bottom line. It doesn't do that itself, however, so that the newline shifting can make use of it. This could likely be optimized to not require that, but I'm too lazy right now.
+
+`printnl` prints a newline, which really means it shifts the entire screen of characters up one line. I opted to make my own copy of the display in memory, rather than finding if it's stored somewhere in memory already, as it could be convenient later.

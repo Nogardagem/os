@@ -36,7 +36,7 @@ printstack:
         cmp ax,0
         jne startps
     push si ;put function return address back
-    ret
+ret
 
 printal:
     pushad
@@ -114,7 +114,7 @@ printnl:
 
     popad
     mov dl,0
-    ret
+ret
 
 
 Start:
