@@ -146,9 +146,25 @@ Start:
     mov dl,0
 
     jmp Main
+	jmp nextSectorStart
 
 times 0200h - 2 - ($ - $$)  db 0    ;Zerofill up to 510 bytes
 dw 0AA55h       ;Boot Sector signature
+
+nextSectorStart:
+    ;push 0
+    ;push 'a'
+    ;push 'b'
+    ;push 'c'
+    
+    inc ax
+    mov dh,24
+    call printbyte
+    call printnl
+jmp nextSectorStart
+
+
+
 
 struc VesaInfoBlock				;	VesaInfoBlock_size = 512 bytes
 	.Signature		resb 4		;	must be 'VESA'
@@ -173,6 +189,10 @@ Main:
 	pop es
 	mov di, VesaInfoBlockBuffer
 	call get_vesa_info
+
+    mov al,'v'
+    mov dx,0x1800
+    call printal
 
 	jmp Main2
 
@@ -250,13 +270,45 @@ Main2:
 	je .NoModes
 
     call vbe_set_mode
+
+	;call get_vesa_mode_info
 .NoModes:
-    mov dx,0x1800
     call printnl
-    mov al, 'f'
-    call printal
+    mov ax,[VesaModeInfoBlock.Width]
+    call printbyte
+    mov al,ah
+    call printbyte
+    
+    call printnl
+    mov ax,[VesaModeInfoBlock.Height]
+    ;mov ax,0x1234
+    call printbyte
+    mov al,ah
+    call printbyte
+
+
 
 	jmp $
+
+
+;	in:
+;		cx - VESA mode number
+;		es:di - 256-byte buffer
+;	out:
+;		cf - set on error
+get_vesa_mode_info:
+	clc
+	mov ax, 0x4f01
+	int 0x10
+	cmp ax, 0x004f
+	jne .failed
+	ret
+	.failed:
+        mov al,'f'
+        mov dx,0x1800
+        call printal
+		stc
+		ret
 
 ALIGN(4)
 
@@ -273,23 +325,38 @@ VesaModeInfoBlockBuffer:	istruc VesaModeInfoBlock
 ; Out\	FLAGS = Carry clear on success
 ; Out\	Width, height, bpp, physical buffer, all set in vbe_screen structure
 
-; UNUSED STUFF AS OF RIGHT NOW
-
 vbe_set_mode:
-    mov [.width], ax
+    call printnl
+    push 0
+    push 'e'
+    push 'b'
+    push 'v'
+    call printstack
+    call printnl
+
+	mov [.width], ax
 	mov [.height], bx
 	mov [.bpp], cl
 
 	sti
 
 	push es					; some VESA BIOSes destroy ES, or so I read
-    mov ax, 0x4F00				; get VBE BIOS info
+
+    mov al,'c'
+    call printal
+    call printnl
+
+	mov ax, 0x4F00				; get VBE BIOS info
 	mov di, VesaInfoBlockBuffer
 	int 0x10
 	pop es
 
 	cmp ax, 0x4F				; BIOS doesn't support VBE?
-    jne .error
+    mov al,'b'
+    call printal
+    call printnl
+
+	jne .error
 
 	mov ax, word[VesaInfoBlockBuffer+VesaInfoBlock.VideoModesOffset]
 	mov [.offset], ax
@@ -309,7 +376,7 @@ vbe_set_mode:
 	mov fs, ax
 
 	cmp word[.mode], 0xFFFF			; end of list?
-	je .no_more_modes
+	je .error
 
 	push es
 	mov ax, 0x4F01				; get VBE mode info
@@ -431,11 +498,7 @@ vbe_set_mode:
     mov al,'e'
     mov dx,0x1800
     call printal
-ret
-
-.no_more_modes:
-    nop;pass
-ret
+	ret
 
 .width				dw 0
 .height				dw 0
