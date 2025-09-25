@@ -311,17 +311,21 @@ Main2:
     mov edi,[vbe_screen.physical_buffer] ; points to screen
     ;add edi,0x4000
 
-    mov esi,[vbe_screen.bytes_per_line]
+    mov esi,0
+    mov si,[vbe_screen.bytes_per_line]
     mov edx,[vbe_screen.physical_buffer]
-    mov ebx,12
-    mov ecx,12
+    mov ebx,0
+    mov ecx,0
     .loo:
         ;esi = bytes per scan line
         ;edx = physical address of linear framebuffer memory.
         ;ebx = x coord * 3
         ;ecx = y coord
-        inc ecx
+        
         call DrawPixel
+        inc ebx
+        inc ebx
+        inc ebx
     jmp .loo
 .NoModes:
     call ERROR
