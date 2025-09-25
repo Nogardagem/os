@@ -4,7 +4,7 @@
 
 ```batch
 "C:\Program Files\nasm\nasm" -f bin boot.asm -o boot.bin
-"C:\Program Files\qemu\qemu-system-i386" -drive file=boot.bin,index=0,format=raw
+"C:\Program Files\qemu\qemu-system-i386" -drive file=boot.bin,index=0,format=raw -display gtk,zoom-to-fit=on
 ```
 
 ## Files
@@ -36,3 +36,5 @@ My guess would be `-f bin` specifies the output file is in the `.bin` (binary) f
 The `-drive` parameter for QEMU puts a given file (`boot.bin`) into a given drive (`a`, or index 0) when booting the emulated machine. `format=raw` tells QEMU what format the drive is in so that it doesn't complain about being unsure.
 
 More information can be found [here](https://www.qemu.org/docs/master/system/invocation.html#:~:text=add%20QMP%20command.-,%2Ddrive,-option%5B%2Coption%5B%2Coption);
+
+`-display gtk,zoom-to-fit=on` tells qemu to default to zoom to fit the window, so that it doesn't resize it extra large after changing its resolution.

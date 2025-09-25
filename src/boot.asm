@@ -356,8 +356,8 @@ DrawPixel:
     mov     eax, esi                ; BytesPerScanLine
     imul    eax, ecx                ; BytesPerScanLine * Y
     add     eax, ebx                ; BytesPerScanLine * Y + X * 3
-    mov     word [edx+eax], 0x96FA  ; Low word of RGB triplet
-    mov     byte [edx+eax+2], 0x32  ; High byte of RGB triplet
+    mov     word [edx+eax], 0x3456  ; Low word of RGB triplet
+    mov     byte [edx+eax+2], 0x12  ; High byte of RGB triplet
     ret
 
 
@@ -415,9 +415,9 @@ vbe_set_mode:
     ; mov bx,[VesaModeInfoBlockBuffer+VesaModeInfoBlock.width]
     ; cmp bx,1399 ;limit width
     ; jle .Notrightres ;if less than limit amount
-    ; mov al, [VesaModeInfoBlockBuffer+VesaModeInfoBlock.bpp]
-    ; cmp al,24
-    ; jne .Notrightres
+    mov al, [VesaModeInfoBlockBuffer+VesaModeInfoBlock.bpp]
+    cmp al,24
+    jne .Notrightres
     
     call printnl
     mov dh,24
@@ -456,6 +456,9 @@ vbe_set_mode:
 	mov al, [.bpp]
 	cmp al, [VesaModeInfoBlockBuffer+VesaModeInfoBlock.bpp]
 	jne .next_mode
+
+
+    ;call ERROR
 
 	; If we make it here, we've found the correct mode!
 	mov ax, [.width]
