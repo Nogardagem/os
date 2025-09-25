@@ -5,7 +5,7 @@ jmp Start
 vmem equ 1000h ;makes a constant variable, only for assembler to use
 
 diskNumber: db 0
-SECTORS_TO_LOAD equ 3
+SECTORS_TO_LOAD equ 5
 
 ERROR: ;prints line of error when called, with ORG subtracted
     call printnl
@@ -49,13 +49,13 @@ ret
 
 printstack:
     pop si ;remove function return address from stack
-    jmp endps
-    startps:
+    jmp .endps
+    .startps:
         call printal
-    endps:
+    .endps:
         pop ax
         cmp ax,0
-        jne startps
+        jne .startps
     push si ;put function return address back
 ret
 
@@ -214,6 +214,10 @@ struc VesaInfoBlock				;	VesaInfoBlock_size = 512 bytes
 endstruc
 
 Main:
+    in al, 0x92 ;set a20 line??
+    or al, 2
+    out 0x92, al
+
 	push ds
 	pop es
 	mov di, VesaInfoBlockBuffer
@@ -244,45 +248,46 @@ ALIGN(4)
 	iend
 
 struc VesaModeInfoBlock				;	VesaModeInfoBlock_size = 256 bytes
-	.ModeAttributes		resw 1
-	.FirstWindowAttributes	resb 1
-	.SecondWindowAttributes	resb 1
-	.WindowGranularity	resw 1		;	in KB
-	.WindowSize		resw 1		;	in KB
-	.FirstWindowSegment	resw 1		;	0 if not supported
-	.SecondWindowSegment	resw 1		;	0 if not supported
-	.WindowFunctionPtr	resd 1
-	.BytesPerScanLine	resw 1
+	.attributes		resw 1 ;deprecated
+	.window_a	resb 1 ;deprecated
+	.window_b	resb 1 ;deprecated
+	.granularity	resw 1		;deprecated	in KB
+	.window_size		resw 1		;	in KB
+	.segment_a	resw 1		;	0 if not supported
+	.segment_b	resw 1		;	0 if not supported
+	.win_func_ptr	resd 1 ;deprecated
+	.pitch	resw 1 ; bytes per scanline
 
 	;	Added in Revision 1.2
-	.Width			resw 1		;	in pixels(graphics)/columns(text)
-	.Height			resw 1		;	in pixels(graphics)/columns(text)
-	.CharWidth		resb 1		;	in pixels
-	.CharHeight		resb 1		;	in pixels
-	.PlanesCount		resb 1
-	.BitsPerPixel		resb 1
-	.BanksCount		resb 1
-	.MemoryModel		resb 1		;	http://www.ctyme.com/intr/rb-0274.htm#Table82
-	.BankSize		resb 1		;	in KB
-	.ImagePagesCount	resb 1		;	count - 1
-	.Reserved1		resb 1		;	equals 0 in Revision 1.0-2.0, 1 in 3.0
+	.width			resw 1		;	in pixels(graphics)/columns(text)
+	.height			resw 1		;	in pixels(graphics)/columns(text)
+	.w_char		resb 1		;	in pixels
+	.y_char		resb 1		;	in pixels
+	.planes		resb 1
+	.bpp		resb 1
+	.banks		resb 1 ;deprecated
+	.memory_model		resb 1		;	http://www.ctyme.com/intr/rb-0274.htm#Table82
+	.bank_size		resb 1		;	deprecated  in KB
+	.image_pages	resb 1		;	count - 1
+	.reserved0		resb 1		;	equals 0 in Revision 1.0-2.0, 1 in 3.0
 
-	.RedMaskSize		resb 1
-	.RedFieldPosition	resb 1
-	.GreenMaskSize		resb 1
-	.GreenFieldPosition	resb 1
-	.BlueMaskSize		resb 1
-	.BlueFieldPosition	resb 1
-	.ReservedMaskSize	resb 1
-	.ReservedMaskPosition	resb 1
-	.DirectColorModeInfo	resb 1
+	.red_mask		resb 1
+	.red_position	resb 1
+	.green_mask		resb 1
+	.green_position	resb 1
+	.blue_mask		resb 1
+	.blue_position	resb 1
+	.reserved_mask	resb 1
+	.reserved_position	resb 1
+	.direct_color_attributes	resb 1
 
 	;	Added in Revision 2.0
-	.LFBAddress		resd 1
-	.OffscreenMemoryOffset	resd 1
-	.OffscreenMemorySize	resw 1		;	in KB
-	.Reserved2		resb 206	;	available in Revision 3.0, but useless for now
+	.framebuffer		resd 1 ;location of linear frame buffer in memory
+	.off_screen_mem_off	resd 1
+	.off_screen_mem_size	resw 1		;memory in fb not in screen 	in KB
+	.reserved1		resb 206	;	available in Revision 3.0, but useless for now
 endstruc
+
 
 Main2:
 	; after getting VesaInfoBlock:
@@ -295,6 +300,21 @@ Main2:
 	je .NoModes
 
     call vbe_set_mode
+
+    mov eax, [vbe_screen.physical_buffer]
+    mov di,ax
+    ror eax,16
+    ;add ax,0x100
+    push ax
+    pop es
+
+    mov edi,dword[vbe_screen.physical_buffer] ; points to screen
+    ;add edi,0x4000
+    .loo:
+        add edi,4
+        mov eax,0x00ffffff ; color
+        stosd ;
+    jmp .loo
 .NoModes:
     call ERROR
 
@@ -304,20 +324,24 @@ VesaModeInfoBlockBuffer:	istruc VesaModeInfoBlock
 		times VesaModeInfoBlock_size db 0
 	iend
 
+vbe_screen:
+    .width dw 1
+    .height dw 1
+    .physical_buffer dd 1
+    .bytes_per_line dw 1
+    .bpp db 1
+	.bytes_per_pixel dd 1
+    .x_cur_max dw 1
+    .y_cur_max dw 1
 
-; vbe_set_mode:
-; Sets a VESA mode
-; In\	AX = Width
-; In\	BX = Height
-; In\	CL = Bits per pixel
-; Out\	FLAGS = Carry clear on success
-; Out\	Width, height, bpp, physical buffer, all set in vbe_screen structure
 
-; UNUSED STUFF AS OF RIGHT NOW
 
 vbe_set_mode:
+    mov ax,1920
     mov [.width], ax
+    mov bx,1080
 	mov [.height], bx
+    mov cl,24 ;32
 	mov [.bpp], cl
 
 	sti
@@ -362,12 +386,12 @@ vbe_set_mode:
     
 	jne .error
 
-    mov bx,[VesaModeInfoBlockBuffer+VesaModeInfoBlock.Width]
-    cmp bx,1399 ;limit width
-    jle .Notrightres ;if less than limit amount
-    mov al, [VesaModeInfoBlockBuffer+VesaModeInfoBlock.BitsPerPixel]
-    cmp al,32
-    jne .Notrightres
+    ; mov bx,[VesaModeInfoBlockBuffer+VesaModeInfoBlock.width]
+    ; cmp bx,1399 ;limit width
+    ; jle .Notrightres ;if less than limit amount
+    ; mov al, [VesaModeInfoBlockBuffer+VesaModeInfoBlock.bpp]
+    ; cmp al,24
+    ; jne .Notrightres
     
     call printnl
     mov dh,24
@@ -377,72 +401,72 @@ vbe_set_mode:
     mov al,' '
     call printal
 
-    mov ax,[VesaModeInfoBlockBuffer+VesaModeInfoBlock.Width]
+    mov ax,[VesaModeInfoBlockBuffer+VesaModeInfoBlock.width]
     call printbytedec
 
     mov al, 'x'
     call printal
-    mov ax,[VesaModeInfoBlockBuffer+VesaModeInfoBlock.Height]
+    mov ax,[VesaModeInfoBlockBuffer+VesaModeInfoBlock.height]
     call printbytedec
     
     ;print bpp
     mov dl,0xF ;column 15 always
-    mov al, [VesaModeInfoBlockBuffer+VesaModeInfoBlock.BitsPerPixel]
+    mov al, [VesaModeInfoBlockBuffer+VesaModeInfoBlock.bpp]
     mov ah,0
     call printbytedec
 
     .Notrightres:
     ;1920x1080 in hex is 0x0780 by 0x0438
 
-    jmp .next_mode
-	; mov ax, [.width]
-	; cmp ax, [mode_info_block.width]
-	; jne .next_mode
+    ;jmp .next_mode
+	mov ax, [.width]
+	cmp ax, [VesaModeInfoBlockBuffer+VesaModeInfoBlock.width]
+	jne .next_mode
 
-	; mov ax, [.height]
-	; cmp ax, [mode_info_block.height]
-	; jne .next_mode
+	mov ax, [.height]
+	cmp ax, [VesaModeInfoBlockBuffer+VesaModeInfoBlock.height]
+	jne .next_mode
 
-	; mov al, [.bpp]
-	; cmp al, [mode_info_block.bpp]
-	; jne .next_mode
+	mov al, [.bpp]
+	cmp al, [VesaModeInfoBlockBuffer+VesaModeInfoBlock.bpp]
+	jne .next_mode
 
-	; ; If we make it here, we've found the correct mode!
-	; mov ax, [.width]
-	; mov word[vbe_screen.width], ax
-	; mov ax, [.height]
-	; mov word[vbe_screen.height], ax
-	; mov eax, [mode_info_block.framebuffer]
-	; mov dword[vbe_screen.physical_buffer], eax
-	; mov ax, [mode_info_block.pitch]
-	; mov word[vbe_screen.bytes_per_line], ax
-	; mov eax, 0
-	; mov al, [.bpp]
-	; mov byte[vbe_screen.bpp], al
-	; shr eax, 3
-	; mov dword[vbe_screen.bytes_per_pixel], eax
+	; If we make it here, we've found the correct mode!
+	mov ax, [.width]
+	mov word[vbe_screen.width], ax
+	mov ax, [.height]
+	mov word[vbe_screen.height], ax
+	mov eax, [VesaModeInfoBlockBuffer+VesaModeInfoBlock.framebuffer]
+	mov dword[vbe_screen.physical_buffer], eax
+	mov ax, [VesaModeInfoBlockBuffer+VesaModeInfoBlock.pitch]
+	mov word[vbe_screen.bytes_per_line], ax
+	mov eax, 0
+	mov al, [.bpp]
+	mov byte[vbe_screen.bpp], al
+	shr eax, 3
+	mov dword[vbe_screen.bytes_per_pixel], eax
 
-	; mov ax, [.width]
-	; shr ax, 3
-	; dec ax
-	; mov word[vbe_screen.x_cur_max], ax
+	mov ax, [.width]
+	shr ax, 3
+	dec ax
+	mov word[vbe_screen.x_cur_max], ax
 
-	; mov ax, [.height]
-	; shr ax, 4
-	; dec ax
-	; mov word[vbe_screen.y_cur_max], ax
+	mov ax, [.height]
+	shr ax, 4
+	dec ax
+	mov word[vbe_screen.y_cur_max], ax
 
-	; ; Set the mode
-	; push es
-	; mov ax, 0x4F02
-	; mov bx, [.mode]
-	; or bx, 0x4000			; enable LFB
-	; mov di, 0			; not sure if some BIOSes need this... anyway it doesn't hurt
-	; int 0x10
-	; pop es
+	; Set the mode
+	push es
+	mov ax, 0x4F02
+	mov bx, [.mode]
+	or bx, 0x4000			; enable LFB
+	mov di, 0			; not sure if some BIOSes need this... anyway it doesn't hurt
+	int 0x10
+	pop es
 
-	; cmp ax, 0x4F
-	; jne .error
+	cmp ax, 0x4F
+	jne .error
 
 	clc
 	ret
