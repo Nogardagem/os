@@ -308,12 +308,20 @@ Main2:
     push ax
     pop es
 
-    mov edi,dword[vbe_screen.physical_buffer] ; points to screen
+    mov edi,[vbe_screen.physical_buffer] ; points to screen
     ;add edi,0x4000
+
+    mov esi,[vbe_screen.bytes_per_line]
+    mov edx,[vbe_screen.physical_buffer]
+    mov ebx,12
+    mov ecx,12
     .loo:
-        add edi,4
-        mov eax,0x00ffffff ; color
-        stosd ;
+        ;esi = bytes per scan line
+        ;edx = physical address of linear framebuffer memory.
+        ;ebx = x coord * 3
+        ;ecx = y coord
+        inc ecx
+        call DrawPixel
     jmp .loo
 .NoModes:
     call ERROR
@@ -333,6 +341,20 @@ vbe_screen:
 	.bytes_per_pixel dd 1
     .x_cur_max dw 1
     .y_cur_max dw 1
+
+;esi = bytes per scan line
+;edx = physical address of linear framebuffer memory.
+;ebx = x coord * 3
+;ecx = y coord
+
+; IN (ebx,ecx,edx,esi) OUT () MOD (eax)
+DrawPixel:
+    mov     eax, esi                ; BytesPerScanLine
+    imul    eax, ecx                ; BytesPerScanLine * Y
+    add     eax, ebx                ; BytesPerScanLine * Y + X * 3
+    mov     word [edx+eax], 0x96FA  ; Low word of RGB triplet
+    mov     byte [edx+eax+2], 0x32  ; High byte of RGB triplet
+    ret
 
 
 
