@@ -172,3 +172,11 @@ The main use of these functions will be to render memory and labels for data tha
 #### Querying Video Modes
 
 For this section, I've used code and ideas from [OSDev VESA Video Modes](https://wiki.osdev.org/VESA_Video_Modes) and the [OSDev VESA Tutorial](https://wiki.osdev.org/User:Omarrx024/VESA_Tutorial). Initially, I copied and reinterpreted code from *VESA Video Modes* to get the supported video modes from the BIOS using `int 0x10` with `ax = 0x4f01`. After confirming that worked using my `printbyte` function, I got the code from the *VESA Tutorial* that looped through each valid video mode and checked their resolution. I checked the values stored in the `width` variable of the data section, and printed the `width` and `height` of each resolution with a `width` of 1920 (`0x780`), which resulted in `0x780 by 0x438` and `0x780 by 0x4B0`, which are 1920x1080 (16:9) and 1920x1200 (16:10), respectively.
+
+#### Drawing pixels
+
+https://wiki.osdev.org/VESA_Video_Modes
+
+https://wiki.osdev.org/User:Omarrx024/VESA_Tutorial
+
+https://stackoverflow.com/questions/62029926/incorrect-results-drawing-horizontal-and-vertical-lines-to-the-lfb-returned-by-v/62123304#62123304
