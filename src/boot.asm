@@ -365,10 +365,17 @@ vbe_set_mode:
     mov bx,[VesaModeInfoBlockBuffer+VesaModeInfoBlock.Width]
     cmp bx,1399 ;limit width
     jle .Notrightres ;if less than limit amount
-    
+    mov al, [VesaModeInfoBlockBuffer+VesaModeInfoBlock.BitsPerPixel]
+    cmp al,32
+    jne .Notrightres
     
     call printnl
     mov dh,24
+
+    mov al, [.mode]
+    call printbyte
+    mov al,' '
+    call printal
 
     mov ax,[VesaModeInfoBlockBuffer+VesaModeInfoBlock.Width]
     call printbytedec
@@ -378,15 +385,8 @@ vbe_set_mode:
     mov ax,[VesaModeInfoBlockBuffer+VesaModeInfoBlock.Height]
     call printbytedec
     
-    ;mov bx,ax
-    ;mov al,bh
-    ;call printbyte
-    ;mov al,bl
-    ;call printbyte
-
-    mov al, ' '
-    call printal
-
+    ;print bpp
+    mov dl,0xF ;column 15 always
     mov al, [VesaModeInfoBlockBuffer+VesaModeInfoBlock.BitsPerPixel]
     mov ah,0
     call printbytedec
