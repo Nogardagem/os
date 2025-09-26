@@ -306,15 +306,24 @@ Main2:
     mov edx,[vbe_screen.physical_buffer]
     mov ebx,0 ;x pos
     mov ecx,0 ;y pos
-    .loo:
-        ;esi = bytes per scan line
-        ;edx = physical address of linear framebuffer memory.
-        ;ebx = x coord * 3
-        ;ecx = y coord
-        
-        call DrawPixel
-        add ebx,3
-    jmp .loo
+    .loopy:
+        .loopx:
+            ;esi = bytes per scan line
+            ;edx = physical address of linear framebuffer memory.
+            ;ebx = x coord * 3
+            ;ecx = y coord
+            call DrawPixel
+            add ebx,3
+
+        cmp ebx,1920*3
+        jle .loopx
+    mov ebx,0
+    inc ecx
+    cmp ecx,1080
+    jle .loopy
+    mov ecx,0
+    jmp .loopy
+
 .NoModes:
     call ERROR
 
@@ -342,12 +351,11 @@ vbe_screen:
 ; IN (ebx,ecx,edx,esi) OUT () MOD (eax)
 DrawPixel:
     mov eax,0
-    mov ax,[vbe_screen.bytes_per_line]
-    ;mov     eax, esi                ; BytesPerScanLine
+    mov ax,[vbe_screen.bytes_per_line]; BytesPerScanLine
     imul    eax, ecx                ; BytesPerScanLine * Y
     add     eax, ebx                ; BytesPerScanLine * Y + X * 3
-    mov     word [edx+eax], 0x3456  ; Low word of RGB triplet
-    mov     byte [edx+eax+2], bl  ; High byte of RGB triplet
+    mov     word [eax+edx], 0x3456  ; Low word of RGB triplet
+    mov     byte [eax+edx+2], 0x12  ; High byte of RGB triplet
     ret
 
 
