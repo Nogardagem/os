@@ -213,33 +213,6 @@ struc VesaInfoBlock				;	VesaInfoBlock_size = 512 bytes
 	.OEMData		resb 256
 endstruc
 
-Main:
-    in al, 0x92 ;set a20 line??
-    or al, 2
-    out 0x92, al
-
-	push ds
-	pop es
-	mov di, VesaInfoBlockBuffer
-	call get_vesa_info
-
-	jmp Main2
-
-;	in:
-;		es:di - 512-byte buffer
-;	out:
-;		cf - set on error
-get_vesa_info:
-	clc
-	mov ax, 0x4f00
-	int 0x10
-	cmp ax, 0x004f
-	jne .failed
-	ret
-	.failed:
-		stc
-		ret
-
 ALIGN(4)
 
 	VesaInfoBlockBuffer: istruc VesaInfoBlock
@@ -289,17 +262,12 @@ struc VesaModeInfoBlock				;	VesaModeInfoBlock_size = 256 bytes
 endstruc
 
 
-Main2:
-	; after getting VesaInfoBlock:
-	push word [VesaInfoBlockBuffer + VesaInfoBlock.VideoModesSegment]
-	pop es
-	mov di, VesaModeInfoBlockBuffer
-	mov bx, [VesaInfoBlockBuffer + VesaInfoBlock.VideoModesOffset]	;	get video modes list address
-	mov cx, [bx]							;	get first video mode number
-	cmp cx, 0xffff							;	vesa modes list empty
-	je .NoModes
+Main:
+    in al, 0x92 ;set a20 line??
+    or al, 2
+    out 0x92, al
 
-    call vbe_set_mode
+	call vbe_set_mode
 
     ;mov esi,0
     ;mov si,[vbe_screen.bytes_per_line]
