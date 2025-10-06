@@ -378,36 +378,34 @@ vbe_set_mode:
     
 	jne .error
 
-    ; mov bx,[VesaModeInfoBlockBuffer+VesaModeInfoBlock.width]
-    ; cmp bx,1399 ;limit width
-    ; jle .Notrightres ;if less than limit amount
-    mov al, [VesaModeInfoBlockBuffer+VesaModeInfoBlock.bpp]
-    cmp al,24
-    jne .Notrightres
     
-    call printnl
-    mov dh,24
+    ;mov al, [VesaModeInfoBlockBuffer+VesaModeInfoBlock.bpp]
+    ;cmp al,24
+    ;jne .Notrightres
+    
+    ;call printnl
+    ;mov dh,24
 
-    mov al, [.mode]
-    call printbyte
-    mov al,' '
-    call printal
+    ;mov al, [.mode]
+    ;call printbyte
+    ;mov al,' '
+    ;call printal
 
-    mov ax,[VesaModeInfoBlockBuffer+VesaModeInfoBlock.width]
-    call printbytedec
+    ;mov ax,[VesaModeInfoBlockBuffer+VesaModeInfoBlock.width]
+    ;call printbytedec
 
-    mov al, 'x'
-    call printal
-    mov ax,[VesaModeInfoBlockBuffer+VesaModeInfoBlock.height]
-    call printbytedec
+    ;mov al, 'x'
+    ;call printal
+    ;mov ax,[VesaModeInfoBlockBuffer+VesaModeInfoBlock.height]
+    ;call printbytedec
     
     ;print bpp
-    mov dl,0xF ;column 15 always
-    mov al, [VesaModeInfoBlockBuffer+VesaModeInfoBlock.bpp]
-    mov ah,0
-    call printbytedec
+    ;mov dl,0xF ;column 15 always
+    ;mov al, [VesaModeInfoBlockBuffer+VesaModeInfoBlock.bpp]
+    ;mov ah,0
+    ;call printbytedec
 
-    .Notrightres:
+    ;.Notrightres:
     ;1920x1080 in hex is 0x0780 by 0x0438
 
     ;jmp .next_mode
